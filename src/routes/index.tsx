@@ -313,7 +313,7 @@ function Index() {
       hero_description_line_2: "Bow & Arrow Archery Academy has trained 100+ students since 2011 through structured coaching, certified training systems and competition-focused athlete development.",
       contact_phone: "8668054120 / 9840754120",
       contact_email: "coach2017@yahoo.com",
-      contact_address: "Chennai, Tamil Nadu",
+      contact_address: "NO 45 BALAJI NAGAR KOLLUMEDU ROAD VELLANUR CHENNAI 62",
     },
     centers: centres,
     achievements: achievements,
@@ -1197,6 +1197,7 @@ function Index() {
                 <div>
                   <div className="font-display text-xl tracking-widest">BOW &amp; ARROW</div>
                   <div className="text-[10px] tracking-[0.3em] text-muted-foreground">ARCHERY ACADEMY · CHENNAI</div>
+                  <div className="text-[10px] tracking-[0.2em] text-muted-foreground">KOORMAI ELAKU PVT LTD</div>
                 </div>
               </div>
               <p className="mt-5 text-muted-foreground max-w-md">

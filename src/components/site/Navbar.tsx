@@ -36,7 +36,8 @@ export function Navbar({ onEnrollClick }: { onEnrollClick?: () => void }) {
           </div>
           <div className="leading-tight">
             <div className="font-display text-lg tracking-widest text-foreground">BOW &amp; ARROW</div>
-            <div className="text-[10px] tracking-[0.2em] text-muted-foreground -mt-0.5">ARCHERY ACADEMY</div>
+            <div className="text-[10px] tracking-[0.2em] text-muted-foreground -mt-0.5 text-center">ARCHERY ACADEMY</div>
+            <div className="text-[10px] tracking-[0.2em] text-muted-foreground  text-center">KOORMAI ELAKU PVT LTD</div>
           </div>
         </a>
 
@@ -70,6 +71,7 @@ export function Navbar({ onEnrollClick }: { onEnrollClick?: () => void }) {
           </button>
         </div>
       </div>
+      
 
       <AnimatePresence>
         {open && (
