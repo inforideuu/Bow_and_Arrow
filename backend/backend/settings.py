@@ -75,16 +75,32 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import os
+
+DB_NAME = os.environ.get('DB_NAME', 'arrowcraft_academy')
+DB_USER = os.environ.get('DB_USER', 'root')
+DB_PASSWORD = os.environ.get('DB_PASSWORD', 'root')
+DB_HOST = os.environ.get('DB_HOST', 'localhost')
+DB_PORT = os.environ.get('DB_PORT', '3306')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'arrowcraft_academy',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
 }
+
+# TiDB Cloud requires SSL connections in production
+if DB_HOST and 'tidbcloud.com' in DB_HOST:
+    DATABASES['default']['OPTIONS'] = {
+        'ssl': {
+            'ssl_mode': 'REQUIRED'
+        }
+    }
 
 
 # Password validation
