@@ -1444,22 +1444,6 @@ function AdminDashboard() {
                     />
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[10px] uppercase tracking-widest text-muted-foreground block">Avatar Image Key (g1 to g6)</label>
-                    <select
-                      value={t.img}
-                      onChange={(e) => {
-                        const updated = [...siteData.testimonials];
-                        updated[i].img = e.target.value;
-                        setSiteData(prev => ({ ...prev, testimonials: updated }));
-                      }}
-                      className="w-full bg-background/50 border border-border rounded-xl px-3 py-2 text-foreground focus:border-primary outline-none text-sm"
-                    >
-                      {["g1", "g2", "g3", "g4", "g5", "g6"].map(k => (
-                        <option key={k} value={k} className="bg-background">{k.toUpperCase()}</option>
-                      ))}
-                    </select>
-                  </div>
                 </div>
               ))}
             </div>

@@ -410,6 +410,7 @@ function Index() {
               <Sparkles className="h-3.5 w-3.5" /> Established 2011 · Chennai
             </motion.div>
 
+
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -425,7 +426,7 @@ function Index() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.25 }}
-              className="mt-6 max-w-xl text-lg text-muted-foreground"
+              className="mt-6 max-w-xl text-lg text-muted-foreground text-justify"
             >
               {siteData.content.hero_description_line_1}
               <span className="block mt-3 text-base">
@@ -463,7 +464,7 @@ function Index() {
               className="mt-12 grid grid-cols-2 sm:grid-cols-5 gap-4 max-w-3xl"
             >
               {heroStatsMapped.map((s) => (
-                <div key={s.label} className="glass rounded-xl p-4 text-center hover-lift">
+                <div key={s.label} className="glass rounded-xl p-4 text-center hover-lift font-serif">
                   <div className="font-display text-2xl lg:text-3xl text-primary">
                     <Counter to={s.value} suffix={s.suffix} />
                   </div>
@@ -496,6 +497,14 @@ function Index() {
               <p className="text-sm font-semibold text-muted-foreground mt-1" style={{ transform: "translateZ(15px)" }}>
                 Archery Academy
               </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-gold text-xs tracking-[0.25em] uppercase text-primary"
+            >
+              <Sparkles className="h-3.5 w-3.5" /> Managed By KOORMAI ELAKU PVT LTD
             </motion.div>
 
             <div className="relative w-80 h-80 flex items-center justify-center" style={{ perspective: "1000px" }}>
@@ -945,10 +954,12 @@ function Index() {
                           <IconComponent className="h-7 w-7 text-background" />
                         </div>
                         <h3 className="mt-5 font-display text-2xl text-foreground tracking-wider">{p.title}</h3>
-                        <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
+                        <p className="mt-2 text-base font-medium font-serif text-muted-foreground">
+                          {p.desc}
+                        </p>
 
                         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? "max-h-60 opacity-100 mt-4" : "max-h-0 opacity-0"}`}>
-                          <p className="text-xs text-muted-foreground border-t border-border/40 pt-3 leading-relaxed">
+                          <p className="text-sm text-muted-foreground border-t border-border/40 pt-3 leading-relaxed">
                             {p.details}
                           </p>
                         </div>
@@ -1072,7 +1083,7 @@ function Index() {
                     ))}
                   </div>
                   <div className="mt-6 flex items-center justify-center gap-3">
-                    <img src={imageMap[t.img] || g1} loading="lazy" width={80} height={80} alt="" className="h-12 w-12 rounded-full object-cover border-2 border-primary" />
+                    {/* <img src={imageMap[t.img] || g1} loading="lazy" width={80} height={80} alt="" className="h-12 w-12 rounded-full object-cover border-2 border-primary" /> */}
                     <div className="text-left">
                       <div className="font-semibold text-foreground">{t.name}</div>
                       <div className="text-xs text-muted-foreground tracking-wider uppercase">{t.role}</div>
@@ -1186,8 +1197,8 @@ function Index() {
       </section>
 
       {/* FOOTER */}
-      <footer className="relative pt-20 pb-10 border-t border-border bg-charcoal">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+      <footer className="relative pt-20 border-t border-border bg-charcoal">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8 pb-12">
           <div className="grid md:grid-cols-5 gap-20">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2">
@@ -1198,7 +1209,7 @@ function Index() {
                 <div>
                   <div className="font-display text-xl tracking-widest">BOW &amp; ARROW</div>
                   <div className="text-[10px] tracking-[0.3em] text-muted-foreground">ARCHERY ACADEMY · CHENNAI</div>
-                  <div className="text-[10px] tracking-[0.2em] text-muted-foreground">KOORMAI ELAKU PVT LTD</div>
+                  <div className="text-[10px] tracking-[0.2em] text-primary">KOORMAI ELAKU PVT LTD</div>
                 </div>
               </div>
               <p className="mt-5 text-muted-foreground max-w-md">
@@ -1237,8 +1248,10 @@ function Index() {
               <img src="zenelaitinfotech_logo.png" alt="zenelait_infotech" className="h-15 w-auto" />
             </div>
           </div>
+        </div>
 
-          <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="border-t border-border/40 bg-black py-8">
+          <div className="mx-auto max-w-7xl px-5 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} Bow &amp; Arrow Archery Academy. All rights reserved.
             </div>
@@ -1369,9 +1382,9 @@ function ContactForm({ centers }: { centers: { name: string; desc: string }[] })
   };
 
   return (
-    <form onSubmit={handleSubmit} className="glass-gold rounded-3xl p-8 shadow-elegant">
-      <div className="font-display text-2xl text-foreground tracking-wider">Book a Free Trial</div>
-      <p className="text-sm text-muted-foreground mt-1">Fill in the form and our team will reach out within 24 hours.</p>
+    <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-8 shadow-elegant text-black">
+      <div className="font-display text-2xl text-black tracking-wider">Book a Free Trial</div>
+      <p className="text-sm  mt-1">Fill in the form and our team will reach out within 24 hours.</p>
 
       {status === "error" && (
         <div className="mt-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs">
@@ -1385,26 +1398,26 @@ function ContactForm({ centers }: { centers: { name: string; desc: string }[] })
         <Field label="Email" name="email" value={formData.email} onChange={handleChange} placeholder="you@email.com" className="sm:col-span-2" />
 
         <div className="sm:col-span-2">
-          <label className="text-xs uppercase tracking-widest text-muted-foreground">Preferred Centre</label>
+          <label className="text-xs uppercase tracking-widest text-black/70 font-semibold">Preferred Centre</label>
           <select
             name="preferred_center"
             value={formData.preferred_center}
             onChange={handleChange}
-            className="mt-2 w-full bg-background/40 border border-border rounded-xl px-4 py-3 text-foreground outline-none focus:border-primary"
+            className="mt-2 w-full bg-primary/5 border border-primary/45 rounded-xl px-4 py-3 text-black outline-none focus:border-primary focus:ring-1 focus:ring-primary"
           >
-            {centers.map((c) => (<option key={c.name} value={c.name} className="bg-background">{c.name}</option>))}
+            {centers.map((c) => (<option key={c.name} value={c.name} className="bg-white text-black">{c.name}</option>))}
           </select>
         </div>
 
         <div className="sm:col-span-2">
-          <label className="text-xs uppercase tracking-widest text-muted-foreground">Message</label>
+          <label className="text-xs uppercase tracking-widest text-black/70 font-semibold">Message</label>
           <textarea
             name="message"
             value={formData.message}
             onChange={handleChange}
             rows={4}
             placeholder="Tell us about your goals..."
-            className="mt-2 w-full bg-background/40 border border-border rounded-xl px-4 py-3 text-foreground outline-none focus:border-primary resize-none"
+            className="mt-2 w-full bg-primary/5 border border-primary/45 rounded-xl px-4 py-3 text-black placeholder:text-stone-400 outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none"
           />
         </div>
       </div>
@@ -1443,14 +1456,14 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label className="text-xs uppercase tracking-widest text-muted-foreground">{label}</label>
+      <label className="text-xs uppercase tracking-widest text-black/70 font-semibold">{label}</label>
       <input
         type="text"
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="mt-2 w-full bg-background/40 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
+        className="mt-2 w-full bg-primary/5 border border-primary/45 rounded-xl px-4 py-3 text-black placeholder:text-stone-400 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
         required
       />
     </div>
