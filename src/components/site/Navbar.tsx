@@ -34,10 +34,10 @@ export function Navbar({ onEnrollClick }: { onEnrollClick?: () => void }) {
           <div className="relative">
             <img src="./b&a logo.png" alt="b&a logo.png" className="h-15 w-auto" />
           </div>
-          <div className="leading-tight">
+          <div className="leading-tight flex flex-col items-start">
             <div className="font-display text-lg tracking-widest text-foreground">BOW &amp; ARROW</div>
-            <div className="text-[10px] tracking-[0.2em] text-muted-foreground -mt-0.5 text-center">ARCHERY ACADEMY</div>
-            <div className="text-[20px] tracking-[0.2em] text-primary  text-center">KOORMAI ELAKU PVT LTD</div>
+            <div className="text-[10px] tracking-[0.2em] text-muted-foreground -mt-0.5 text-left">ARCHERY ACADEMY</div>
+            <div className="text-[10px] tracking-[0.2em] text-primary text-left">KOORMAI ELAKU PVT LTD</div>
           </div>
         </a>
 

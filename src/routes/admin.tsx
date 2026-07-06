@@ -26,6 +26,14 @@ import {
 } from "lucide-react";
 
 import { API_URL } from "@/lib/utils";
+import g1 from "@/assets/g1.jpg";
+import g2 from "@/assets/g2.jpg";
+import g3 from "@/assets/g3.jpg";
+import g4 from "@/assets/g4.jpg";
+import g5 from "@/assets/g5.jpg";
+import g6 from "@/assets/g6.jpg";
+
+const imageMap: Record<string, string> = { g1, g2, g3, g4, g5, g6 };
 
 export const Route = createFileRoute("/admin")({
   component: AdminDashboard,
@@ -1523,15 +1531,7 @@ function AdminDashboard() {
                     <span className="text-[10px] text-muted-foreground uppercase font-mono">Image Preview:</span>
                     <div className="h-12 w-16 bg-charcoal border border-border rounded overflow-hidden">
                       <img
-                        src={
-                          img.src === "g1" ? "/src/assets/g1.jpg" :
-                            img.src === "g2" ? "/src/assets/g2.jpg" :
-                              img.src === "g3" ? "/src/assets/g3.jpg" :
-                                img.src === "g4" ? "/src/assets/g4.jpg" :
-                                  img.src === "g5" ? "/src/assets/g5.jpg" :
-                                    img.src === "g6" ? "/src/assets/g6.jpg" :
-                                      img.src
-                        }
+                        src={imageMap[img.src] || img.src}
                         alt="preview"
                         className="h-full w-full object-cover"
                         onError={(e) => {
