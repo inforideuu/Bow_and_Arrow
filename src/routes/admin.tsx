@@ -25,6 +25,8 @@ import {
   Bell
 } from "lucide-react";
 
+import { API_URL } from "@/lib/utils";
+
 export const Route = createFileRoute("/admin")({
   component: AdminDashboard,
 });
@@ -143,11 +145,11 @@ function AdminDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const siteRes = await fetch("http://localhost:8000/api/site-data/");
+      const siteRes = await fetch(`${API_URL}/api/site-data/`);
       const siteJson = await siteRes.json();
       setSiteData(siteJson);
 
-      const subRes = await fetch("http://localhost:8000/api/admin/submissions/");
+      const subRes = await fetch(`${API_URL}/api/admin/submissions/`);
       const subJson = await subRes.json();
       setSubmissions(subJson);
     } catch (err) {
@@ -228,7 +230,7 @@ function AdminDashboard() {
   const handleSaveContent = async () => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-content/", {
+      const res = await fetch(`${API_URL}/api/admin/update-content/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(siteData.content),
@@ -249,7 +251,7 @@ function AdminDashboard() {
   const handleSaveCenters = async (updatedCenters: typeof siteData.centers) => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-centers/", {
+      const res = await fetch(`${API_URL}/api/admin/update-centers/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedCenters),
@@ -271,7 +273,7 @@ function AdminDashboard() {
   const handleSaveAchievements = async (updatedAchievements: typeof siteData.achievements) => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-achievements/", {
+      const res = await fetch(`${API_URL}/api/admin/update-achievements/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedAchievements),
@@ -293,7 +295,7 @@ function AdminDashboard() {
   const handleSaveTestimonials = async (updatedTestimonials: typeof siteData.testimonials) => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-testimonials/", {
+      const res = await fetch(`${API_URL}/api/admin/update-testimonials/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTestimonials),
@@ -315,7 +317,7 @@ function AdminDashboard() {
   const handleSaveGallery = async (updatedGallery: typeof siteData.gallery) => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-gallery-images/", {
+      const res = await fetch(`${API_URL}/api/admin/update-gallery-images/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedGallery),
@@ -337,7 +339,7 @@ function AdminDashboard() {
   const handleSaveFeatures = async (updatedFeatures: typeof siteData.features) => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-features/", {
+      const res = await fetch(`${API_URL}/api/admin/update-features/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFeatures),
@@ -359,7 +361,7 @@ function AdminDashboard() {
   const handleSaveWhyArchery = async (updatedWhy: typeof siteData.why_archery) => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-why-archery/", {
+      const res = await fetch(`${API_URL}/api/admin/update-why-archery/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedWhy),
@@ -381,7 +383,7 @@ function AdminDashboard() {
   const handleSavePrograms = async (updatedPrograms: typeof siteData.programs) => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-programs/", {
+      const res = await fetch(`${API_URL}/api/admin/update-programs/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedPrograms),
@@ -403,7 +405,7 @@ function AdminDashboard() {
   const handleSaveAssessments = async (updatedAssessments: typeof siteData.assessments) => {
     setSaveStatus("saving");
     try {
-      const res = await fetch("http://localhost:8000/api/admin/update-assessments/", {
+      const res = await fetch(`${API_URL}/api/admin/update-assessments/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedAssessments),
@@ -425,7 +427,7 @@ function AdminDashboard() {
   const handleDeleteContact = async (id: number) => {
     if (!window.confirm("Are you sure you want to delete this trial booking?")) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/admin/contacts/${id}/delete/`, {
+      const res = await fetch(`${API_URL}/api/admin/contacts/${id}/delete/`, {
         method: "POST"
       });
       if (res.ok) {
@@ -448,7 +450,7 @@ function AdminDashboard() {
   const handleClearContacts = async () => {
     if (!window.confirm("Are you sure you want to delete ALL trial bookings? This action cannot be undone.")) return;
     try {
-      const res = await fetch("http://localhost:8000/api/admin/contacts/clear/", {
+      const res = await fetch(`${API_URL}/api/admin/contacts/clear/`, {
         method: "POST"
       });
       if (res.ok) {

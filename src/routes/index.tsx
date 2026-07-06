@@ -44,6 +44,7 @@ import { Counter } from "@/components/site/Counter";
 import { Reveal } from "@/components/site/Reveal";
 import { useState, useEffect } from "react";
 import { EnrollmentModal } from "@/components/site/EnrollmentModal";
+import { API_URL } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -327,7 +328,7 @@ function Index() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/site-data/")
+    fetch(`${API_URL}/api/site-data/`)
       .then((res) => res.json())
       .then((data) => {
         if (data.content && data.centers && data.achievements && data.testimonials && data.gallery && data.batches && data.assessments && data.features && data.why_archery && data.programs) {
@@ -1316,7 +1317,7 @@ function ContactForm({ centers }: { centers: { name: string; desc: string }[] })
     setStatus("submitting");
 
     try {
-      const response = await fetch("http://localhost:8000/api/contact/", {
+      const response = await fetch(`${API_URL}/api/contact/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

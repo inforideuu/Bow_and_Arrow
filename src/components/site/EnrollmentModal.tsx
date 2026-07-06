@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Send, CheckCircle2, AlertCircle, Camera } from "lucide-react";
+import { API_URL } from "../../lib/utils";
 
 interface EnrollmentModalProps {
   isOpen: boolean;
@@ -91,7 +92,7 @@ export function EnrollmentModal({ isOpen, onClose }: EnrollmentModalProps) {
 
     setStatus("submitting");
     try {
-      const response = await fetch("http://localhost:8000/api/enroll/", {
+      const response = await fetch(`${API_URL}/api/enroll/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
