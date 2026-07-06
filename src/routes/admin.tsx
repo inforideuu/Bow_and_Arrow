@@ -172,7 +172,7 @@ function AdminDashboard() {
         <div className="absolute inset-0 grid-pattern opacity-25 pointer-events-none" />
         <div className="relative w-full max-w-md bg-charcoal/80 border border-primary/20 p-8 rounded-3xl backdrop-blur-md shadow-elegant space-y-6">
           <div className="text-center space-y-2">
-            <img src="/b&a logo.jpeg" alt="Logo" className="h-16 w-auto mx-auto rounded" />
+            <img src="b&a logo.png" alt="Logo" className="h-16 w-auto mx-auto rounded" />
             <h1 className="font-display text-3xl uppercase tracking-wider text-gradient-gold">Admin Portal</h1>
             <p className="text-xs text-muted-foreground uppercase tracking-widest">Bow & Arrow Archery Academy</p>
           </div>
@@ -865,7 +865,7 @@ function AdminDashboard() {
       <aside className="w-full md:w-64 bg-charcoal border-b md:border-b-0 md:border-r border-border shrink-0 flex flex-col justify-between">
         <div>
           <div className="p-6 border-b border-border flex items-center gap-2">
-            <img src="/b&a logo.jpeg" alt="Logo" className="h-10 w-auto rounded" />
+            <img src="b&a logo.png" alt="Logo" className="h-20 w-25" />
             <div>
               <div className="font-display text-lg tracking-wider text-primary">ADMIN CONSOLE</div>
               <div className="text-[9px] tracking-widest text-muted-foreground uppercase -mt-1">B&amp;A Archery Academy</div>
