@@ -1583,6 +1583,9 @@ function AdminDashboard() {
                       <label className="text-[10px] uppercase tracking-widest text-muted-foreground">Author Name</label>
                       <input
                         type="text"
+                        name={`testimonial-author-name-${i}`}
+                        autoComplete="off"
+                        data-lpignore="true"
                         value={t.name}
                         onChange={(e) => {
                           const updated = [...siteData.testimonials];
@@ -1596,6 +1599,9 @@ function AdminDashboard() {
                       <label className="text-[10px] uppercase tracking-widest text-muted-foreground">Author Designation</label>
                       <input
                         type="text"
+                        name={`testimonial-author-role-${i}`}
+                        autoComplete="off"
+                        data-lpignore="true"
                         value={t.role}
                         onChange={(e) => {
                           const updated = [...siteData.testimonials];
@@ -1610,6 +1616,9 @@ function AdminDashboard() {
                   <div className="space-y-1">
                     <label className="text-[10px] uppercase tracking-widest text-muted-foreground block">Parent Quote</label>
                     <textarea
+                      name={`testimonial-author-quote-${i}`}
+                      autoComplete="off"
+                      data-lpignore="true"
                       value={t.quote}
                       rows={3}
                       onChange={(e) => {
