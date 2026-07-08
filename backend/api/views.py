@@ -158,6 +158,23 @@ def enroll_student(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            student_name = data.get('student_name', '').strip()
+            dob = data.get('dob', '').strip()
+            primary_contact = data.get('primary_contact', '').strip()
+            
+            if student_name:
+                duplicate = False
+                if dob and Enrollment.objects.filter(student_name__iexact=student_name, dob=dob).exists():
+                    duplicate = True
+                elif primary_contact and Enrollment.objects.filter(student_name__iexact=student_name, primary_contact=primary_contact).exists():
+                    duplicate = True
+                
+                if duplicate:
+                    return JsonResponse({
+                        'status': 'error', 
+                        'message': 'This student is already enrolled. Please contact the academy directly for program changes.'
+                    }, status=400)
+
             enrollment = Enrollment.objects.create(
                 student_name=data.get('student_name', ''),
                 dob=data.get('dob', ''),

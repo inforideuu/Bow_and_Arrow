@@ -22,7 +22,8 @@ import {
   Heart,
   Target,
   Download,
-  Bell
+  Bell,
+  Check
 } from "lucide-react";
 
 import { API_URL } from "@/lib/utils";
@@ -91,14 +92,19 @@ function AdminDashboard() {
 
   const [loading, setLoading] = useState(true);
   const [readIds, setReadIds] = useState<string[]>([]);
+  const [clearedNotifIds, setClearedNotifIds] = useState<string[]>([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem("read_notification_ids");
-        if (saved) {
-          setReadIds(JSON.parse(saved));
+        const savedRead = localStorage.getItem("read_notification_ids");
+        if (savedRead) {
+          setReadIds(JSON.parse(savedRead));
+        }
+        const savedCleared = localStorage.getItem("cleared_notification_ids");
+        if (savedCleared) {
+          setClearedNotifIds(JSON.parse(savedCleared));
         }
       } catch (e) {
         console.error("Failed to load notifications from localStorage", e);
@@ -107,7 +113,7 @@ function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && readIds.length > 0) {
+    if (typeof window !== "undefined") {
       try {
         localStorage.setItem("read_notification_ids", JSON.stringify(readIds));
       } catch (e) {
@@ -116,6 +122,15 @@ function AdminDashboard() {
     }
   }, [readIds]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("cleared_notification_ids", JSON.stringify(clearedNotifIds));
+      } catch (e) {
+        console.error("Failed to save cleared notifications to localStorage", e);
+      }
+    }
+  }, [clearedNotifIds]);
 
   // Derived notifications
   const allNotifications = [
@@ -139,12 +154,133 @@ function AdminDashboard() {
     }))
   ].sort((a, b) => b.rawTime - a.rawTime);
 
-  const unreadCount = allNotifications.filter(n => !readIds.includes(n.id)).length;
+  const unreadCount = allNotifications.filter(n => !readIds.includes(n.id) && !clearedNotifIds.includes(n.id)).length;
   const recentNotifications = allNotifications.slice(0, 10);
+  const visibleNotifications = recentNotifications.filter(n => !clearedNotifIds.includes(n.id));
 
   const markAllRead = () => {
     setReadIds(allNotifications.map(n => n.id));
   };
+
+  const clearAllNotifications = () => {
+    setClearedNotifIds(allNotifications.map(n => n.id));
+    setReadIds(allNotifications.map(n => n.id));
+  };
+
+  const handleExportCSV = () => {
+    const headers = [
+      "Student Name", "Date of Birth", "Age", "Gender", "Blood Group", 
+      "Nationality", "School/Institution", "Grade", "Residential Address", 
+      "City & PIN", "Aadhar No", "Father Name", "Father Occupation", 
+      "Mother Name", "Mother Occupation", "Primary Contact", 
+      "Alternate Contact", "Email Address", "Relationship to Student", 
+      "Training Level", "Date of Joining", "Optional Add-ons", 
+      "Medical Conditions", "Medical Details", "Allergies", 
+      "Medications", "Emergency Contact Name", "Emergency Contact Phone", 
+      "Submitted At"
+    ];
+
+    const rows = submissions.enrollments.map(e => [
+      e.student_name, e.dob, e.age, e.gender, e.blood_group, 
+      e.nationality, e.school, e.grade, e.residential_address, 
+      e.city_pin, e.aadhar_no, e.father_name, e.father_occupation, 
+      e.mother_name, e.mother_occupation, e.primary_contact, 
+      e.alternate_contact, e.email_address, e.relationship, 
+      e.training_level, e.date_of_joining, e.add_ons, 
+      e.medical_conditions_exist, e.medical_details, e.allergies, 
+      e.medications, e.emergency_name, e.emergency_phone, 
+      new Date(e.submitted_at).toLocaleString()
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => 
+        row.map(val => {
+          const stringVal = val === null || val === undefined ? "" : String(val);
+          if (stringVal.includes(",") || stringVal.includes("\n") || stringVal.includes('"')) {
+            return `"${stringVal.replace(/"/g, '""')}"`;
+          }
+          return stringVal;
+        }).join(",")
+      )
+    ].join("\n");
+
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Student_Enrollments_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const [prevNotifIds, setPrevNotifIds] = useState<string[]>([]);
+
+  const playNotificationSound = () => {
+    try {
+      const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const playTone = (freq: number, start: number, duration: number) => {
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.08, start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start(start);
+        osc.stop(start + duration);
+      };
+      playTone(523.25, context.currentTime, 0.15); // C5
+      playTone(659.25, context.currentTime + 0.1, 0.25); // E5
+    } catch (e) {
+      console.error("Failed to play notification sound", e);
+    }
+  };
+
+  useEffect(() => {
+    if (allNotifications.length === 0) return;
+    
+    if (prevNotifIds.length === 0) {
+      setPrevNotifIds(allNotifications.map(n => n.id));
+      return;
+    }
+
+    const newUnread = allNotifications.filter(
+      n => !prevNotifIds.includes(n.id) && !readIds.includes(n.id)
+    );
+
+    if (newUnread.length > 0) {
+      playNotificationSound();
+      setPrevNotifIds(allNotifications.map(n => n.id));
+    } else if (allNotifications.length !== prevNotifIds.length) {
+      setPrevNotifIds(allNotifications.map(n => n.id));
+    }
+  }, [allNotifications, readIds, prevNotifIds]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    
+    const interval = setInterval(() => {
+      const fetchSilent = async () => {
+        try {
+          const siteRes = await fetch(`${API_URL}/api/site-data/`);
+          const siteJson = await siteRes.json();
+          setSiteData(siteJson);
+
+          const subRes = await fetch(`${API_URL}/api/admin/submissions/`);
+          const subJson = await subRes.json();
+          setSubmissions(subJson);
+        } catch (err) {
+          console.error("Failed to fetch data in background", err);
+        }
+      };
+      fetchSilent();
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [isLoggedIn]);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [statusMsg, setStatusMsg] = useState("");
   const [selectedEnrollment, setSelectedEnrollment] = useState<any | null>(null);
@@ -781,10 +917,7 @@ function AdminDashboard() {
                 <div class="info-label">Assigned Training Level</div>
                 <div class="info-value"><span class="badge" style="background-color: #e3f2fd; color: #1565c0; border-color: #bbdefb;">${enrollment.training_level || "Beginner"}</span></div>
               </div>
-              <div class="info-col-2 info-item">
-                <div class="info-label">Coaching model Option</div>
-                <div class="info-value">${enrollment.coaching_option || "—"}</div>
-              </div>
+
               <div class="info-col-3 info-item">
                 <div class="info-label">Selected Optional Add-ons</div>
                 <div class="info-value">${enrollment.add_ons || "None selected."}</div>
@@ -811,16 +944,28 @@ function AdminDashboard() {
               </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-              <div class="footer-note" style="width: 50%;">
-                <div>
-                  Bow & Arrow Archery Academy Chennai Admissions<br/>
-                  Document reference: BAA-ENR-${enrollment.id || "00"}<br/>
-                  Generated on: ${new Date().toLocaleDateString()}
+            <div style="margin-top: 50px; display: flex; justify-content: space-between; gap: 30px; margin-bottom: 25px;">
+              <div style="text-align: center;">
+                <div style="border-top: 1px solid #b89347; width: 210px; margin-top: 45px; padding-top: 5px; font-size: 10px; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">
+                  Player Signature
                 </div>
               </div>
-              <div class="signature-box">
-                <div class="signature-line">Authorized Signature</div>
+              <div style="text-align: center;">
+                <div style="border-top: 1px solid #b89347; width: 210px; margin-top: 45px; padding-top: 5px; font-size: 10px; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">
+                  Parent / Guardian Signature
+                </div>
+              </div>
+              <div style="text-align: center;">
+                <div style="border-top: 1px solid #b89347; width: 210px; margin-top: 45px; padding-top: 5px; font-size: 10px; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">
+                  Authorized Signature
+                </div>
+              </div>
+            </div>
+
+            <div class="footer-note" style="margin-top: 20px;">
+              <div>
+                Bow & Arrow Archery Academy Chennai Admissions<br/>
+                Document reference: BAA-ENR-${enrollment.id || "00"} · Generated on: ${new Date().toLocaleDateString()}
               </div>
             </div>
           </div>
@@ -945,22 +1090,22 @@ function AdminDashboard() {
                 <div className="absolute right-0 mt-3 w-80 bg-card border border-primary/20 rounded-2xl shadow-elegant overflow-hidden z-50">
                   <div className="p-4 border-b border-border bg-charcoal flex justify-between items-center">
                     <span className="font-display text-sm tracking-wider uppercase text-foreground">Recent Submissions</span>
-                    {unreadCount > 0 && (
+                    {visibleNotifications.length > 0 && (
                       <button
-                        onClick={markAllRead}
+                        onClick={clearAllNotifications}
                         className="text-[10px] uppercase tracking-widest text-primary hover:underline font-semibold"
                       >
-                        Clear New
+                        Clear All
                       </button>
                     )}
                   </div>
                   <div className="max-h-60 overflow-y-auto divide-y divide-border">
-                    {recentNotifications.length === 0 ? (
+                    {visibleNotifications.length === 0 ? (
                       <div className="p-6 text-center text-xs text-muted-foreground">
                         No new notifications.
                       </div>
                     ) : (
-                      recentNotifications.map((n, idx) => (
+                      visibleNotifications.map((n, idx) => (
                         <div
                           key={idx}
                           onClick={() => {
@@ -975,9 +1120,36 @@ function AdminDashboard() {
                         >
                           <div className="flex justify-between items-start">
                             <span className="font-bold text-foreground truncate max-w-[140px]">{n.title}</span>
-                            <span className="text-[9px] uppercase tracking-widest text-primary/80 font-semibold px-1.5 py-0.5 rounded bg-primary/10">
-                              {n.type}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              {!readIds.includes(n.id) && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setReadIds(prev => [...prev, n.id]);
+                                  }}
+                                  title="Mark as read"
+                                  className="p-1 rounded hover:bg-primary/20 text-primary transition-colors cursor-pointer"
+                                >
+                                  <Check className="h-3 w-3" />
+                                </button>
+                              )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setClearedNotifIds(prev => [...prev, n.id]);
+                                  if (!readIds.includes(n.id)) {
+                                    setReadIds(prev => [...prev, n.id]);
+                                  }
+                                }}
+                                title="Dismiss/Clear"
+                                className="p-1 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-colors cursor-pointer"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                              <span className="text-[9px] uppercase tracking-widest text-primary/80 font-semibold px-1.5 py-0.5 rounded bg-primary/10">
+                                {n.type}
+                              </span>
+                            </div>
                           </div>
                           <p className="text-muted-foreground truncate">{n.desc}</p>
                           <span className="text-[9px] text-muted-foreground/60 block">{n.time}</span>
@@ -1513,16 +1685,26 @@ function AdminDashboard() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] uppercase tracking-widest text-muted-foreground block">Image URL / Preset Key (e.g. g1 to g6)</label>
+                      <label className="text-[10px] uppercase tracking-widest text-muted-foreground block">Upload Local Image</label>
                       <input
-                        type="text"
-                        value={img.src}
+                        type="file"
+                        accept="image/*"
                         onChange={(e) => {
-                          const updated = [...siteData.gallery];
-                          updated[i].src = e.target.value;
-                          setSiteData(prev => ({ ...prev, gallery: updated }));
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          if (file.size > 1.5 * 1024 * 1024) {
+                            alert("Image size must be less than 1.5MB");
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const updated = [...siteData.gallery];
+                            updated[i].src = reader.result as string;
+                            setSiteData(prev => ({ ...prev, gallery: updated }));
+                          };
+                          reader.readAsDataURL(file);
                         }}
-                        className="w-full bg-background/50 border border-border rounded-xl px-3 py-2 text-foreground focus:border-primary outline-none text-xs"
+                        className="w-full text-xs text-muted-foreground file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                       />
                     </div>
                   </div>
@@ -1818,14 +2000,22 @@ function AdminDashboard() {
                 <h2 className="font-display text-4xl text-foreground uppercase tracking-wide">Student Enrollments Register</h2>
                 <p className="text-sm text-muted-foreground">View and review submitted Student Admission Applications.</p>
               </div>
-              <div className="w-full sm:w-64">
-                <input
-                  type="text"
-                  placeholder="Search by name, level, phone..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-charcoal border border-border rounded-xl px-4 py-2.5 text-foreground focus:border-primary outline-none text-sm"
-                />
+              <div className="flex gap-2 w-full sm:w-auto items-center">
+                <button
+                  onClick={handleExportCSV}
+                  className="inline-flex items-center gap-2 border border-border hover:border-primary px-4 py-2.5 rounded-xl cursor-pointer transition-colors text-sm bg-background text-foreground font-semibold"
+                >
+                  <FileSpreadsheet className="h-4 w-4 text-green-500" /> Export to Excel
+                </button>
+                <div className="w-full sm:w-64">
+                  <input
+                    type="text"
+                    placeholder="Search by name, level, phone..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full bg-charcoal border border-border rounded-xl px-4 py-2.5 text-foreground focus:border-primary outline-none text-sm"
+                  />
+                </div>
               </div>
             </div>
 
@@ -1840,7 +2030,6 @@ function AdminDashboard() {
                     <tr className="bg-charcoal/50 border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
                       <th className="p-4">Student Name</th>
                       <th className="p-4">Training Level</th>
-                      <th className="p-4">Coaching Option</th>
                       <th className="p-4">Contact Phone</th>
                       <th className="p-4">Submitted At</th>
                       <th className="p-4 text-center">Action</th>
@@ -1851,7 +2040,6 @@ function AdminDashboard() {
                       <tr key={idx} className="hover:bg-background/40 transition-colors">
                         <td className="p-4 font-bold text-foreground">{e.student_name}</td>
                         <td className="p-4"><span className="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary">{e.training_level}</span></td>
-                        <td className="p-4 text-xs max-w-[200px] truncate">{e.coaching_option}</td>
                         <td className="p-4">{e.primary_contact}</td>
                         <td className="p-4 text-xs text-muted-foreground">{new Date(e.submitted_at).toLocaleDateString()}</td>
                         <td className="p-4 text-center">
@@ -2057,10 +2245,7 @@ function AdminDashboard() {
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Training Level</div>
                     <div className="font-bold text-foreground mt-0.5">{selectedEnrollment.training_level || "—"}</div>
                   </div>
-                  <div>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Coaching Engagement Option</div>
-                    <div className="font-bold text-foreground mt-0.5">{selectedEnrollment.coaching_option || "—"}</div>
-                  </div>
+
                   <div>
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Date of Joining</div>
                     <div className="font-bold text-foreground mt-0.5">{selectedEnrollment.date_of_joining || "—"}</div>

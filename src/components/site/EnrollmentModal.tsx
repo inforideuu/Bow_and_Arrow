@@ -33,7 +33,7 @@ export function EnrollmentModal({ isOpen, onClose }: EnrollmentModalProps) {
     relationship: "",
 
     training_level: "Beginner",
-    coaching_option: "Option 1 — Monthly Salary Model",
+    coaching_option: "",
     add_ons: [] as string[],
     date_of_joining: "",
 
@@ -84,8 +84,8 @@ export function EnrollmentModal({ isOpen, onClose }: EnrollmentModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.student_name || !formData.primary_contact) {
-      setErrorMsg("Student Name and Primary Contact Number are required.");
+    if (!formData.student_name || !formData.primary_contact || !formData.photo) {
+      setErrorMsg("Student Name, Primary Contact Number, and Student Photo are required.");
       setStatus("error");
       return;
     }
@@ -287,7 +287,7 @@ export function EnrollmentModal({ isOpen, onClose }: EnrollmentModalProps) {
                     />
                   </div>
                   <div className="sm:col-span-2 md:col-span-3">
-                    <label className="text-[11px] uppercase tracking-widest text-muted-foreground block">Student Photo (PNG format only, max 1MB)</label>
+                    <label className="text-[11px] uppercase tracking-widest text-muted-foreground block">Student Photo * (PNG format only, max 1MB)</label>
                     {formData.photo ? (
                       <div className="mt-2 flex items-center gap-4 bg-background/30 p-3 rounded-xl border border-border">
                         <img src={formData.photo} alt="Student Preview" className="h-16 w-16 object-cover rounded-lg border border-primary/30" />
@@ -406,7 +406,7 @@ export function EnrollmentModal({ isOpen, onClose }: EnrollmentModalProps) {
                   <div className="sm:col-span-2">
                     <label className="text-[11px] uppercase tracking-widest text-muted-foreground">Relationship to Student</label>
                     <div className="mt-3 flex gap-6">
-                      {["Father", "Mother", "Guardian"].map((rel) => (
+                      {["Parent", "Guardian"].map((rel) => (
                         <label key={rel} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
                           <input
                             type="radio"
