@@ -614,6 +614,29 @@ function AdminDashboard() {
     }
   };
 
+  const handleDeleteEnrollment = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this student enrollment?")) return;
+    try {
+      const res = await fetch(`${API_URL}/api/admin/enrollments/${id}/delete/`, {
+        method: "POST"
+      });
+      if (res.ok) {
+        setSubmissions(prev => ({
+          ...prev,
+          enrollments: prev.enrollments.filter(e => e.id !== id)
+        }));
+        setSaveStatus("success");
+        setStatusMsg("Enrollment deleted successfully!");
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        throw new Error();
+      }
+    } catch {
+      setSaveStatus("error");
+      setStatusMsg("Failed to delete enrollment.");
+    }
+  };
+
   const handleDownloadPDF = (enrollment: any) => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
@@ -2049,12 +2072,20 @@ function AdminDashboard() {
                         <td className="p-4">{e.primary_contact}</td>
                         <td className="p-4 text-xs text-muted-foreground">{new Date(e.submitted_at).toLocaleDateString()}</td>
                         <td className="p-4 text-center">
-                          <button
-                            onClick={() => setSelectedEnrollment(e)}
-                            className="inline-flex items-center gap-1 bg-background border border-border hover:border-primary px-3 py-1.5 rounded-lg text-primary text-xs hover:scale-105 transition-transform"
-                          >
-                            <Eye className="h-3.5 w-3.5" /> Details
-                          </button>
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => setSelectedEnrollment(e)}
+                              className="inline-flex items-center gap-1 bg-background border border-border hover:border-primary px-3 py-1.5 rounded-lg text-primary text-xs hover:scale-105 transition-transform cursor-pointer"
+                            >
+                              <Eye className="h-3.5 w-3.5" /> Details
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEnrollment(e.id)}
+                              className="inline-flex items-center gap-1 bg-background border border-border hover:border-red-500/35 px-3 py-1.5 rounded-lg text-red-400 text-xs hover:scale-105 transition-transform cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" /> Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

@@ -36,5 +36,6 @@ urlpatterns = [
     path('api/admin/update-programs/', views.update_programs),
     path('api/admin/contacts/<int:pk>/delete/', views.delete_contact),
     path('api/admin/contacts/clear/', views.clear_contacts),
+    path('api/admin/enrollments/<int:pk>/delete/', views.delete_enrollment),
 ]
 

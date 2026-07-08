@@ -468,4 +468,15 @@ def clear_contacts(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
 
-
+@csrf_exempt
+def delete_enrollment(request, pk):
+    if request.method == 'DELETE' or request.method == 'POST':
+        try:
+            enrollment = Enrollment.objects.get(pk=pk)
+            enrollment.delete()
+            return JsonResponse({'status': 'success'})
+        except Enrollment.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Record not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
