@@ -918,10 +918,7 @@ function AdminDashboard() {
                 <div class="info-value"><span class="badge" style="background-color: #e3f2fd; color: #1565c0; border-color: #bbdefb;">${enrollment.training_level || "Beginner"}</span></div>
               </div>
 
-              <div class="info-col-3 info-item">
-                <div class="info-label">Selected Optional Add-ons</div>
-                <div class="info-value">${enrollment.add_ons || "None selected."}</div>
-              </div>
+
               <div class="info-item">
                 <div class="info-label">Medical Conditions Exist?</div>
                 <div class="info-value">${enrollment.medical_conditions_exist || "No"}</div>
@@ -2250,12 +2247,7 @@ function AdminDashboard() {
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Date of Joining</div>
                     <div className="font-bold text-foreground mt-0.5">{selectedEnrollment.date_of_joining || "—"}</div>
                   </div>
-                  <div className="col-span-2">
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Optional Add-On Services Selected</div>
-                    <div className="font-bold text-foreground mt-1 max-w-xl leading-relaxed bg-background/50 p-2.5 rounded-xl border border-border">
-                      {selectedEnrollment.add_ons || "None selected."}
-                    </div>
-                  </div>
+
                 </div>
               </div>
 
