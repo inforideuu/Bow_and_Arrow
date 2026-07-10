@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
@@ -365,6 +365,12 @@ function AdminDashboard() {
             >
               Sign In to Dashboard
             </button>
+            <Link
+              to="/"
+              className="w-full mt-2 inline-flex items-center justify-center px-6 py-4 rounded-xl border border-primary/30 text-primary hover:bg-primary/10 font-bold hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer text-sm uppercase tracking-wider"
+            >
+              Back to Home
+            </Link>
           </form>
         </div>
       </div>
@@ -985,7 +991,7 @@ function AdminDashboard() {
             <div class="footer-note" style="margin-top: 20px;">
               <div>
                 Bow & Arrow Archery Academy Chennai Admissions<br/>
-                Document reference: BAA-ENR-${enrollment.id || "00"} · Generated on: ${new Date().toLocaleDateString()}
+                Document reference: BAA-ENR-${630000 + Number(enrollment.id || 0)} · Generated on: ${new Date().toLocaleDateString()}
               </div>
             </div>
           </div>

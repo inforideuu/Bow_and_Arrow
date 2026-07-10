@@ -84,7 +84,12 @@ export function EnrollmentModal({ isOpen, onClose }: EnrollmentModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.student_name || !formData.primary_contact || !formData.photo) {
+    if (!formData.photo) {
+      setErrorMsg("please uploaded the player's photo in PNG format with 1mb size to proceed further");
+      setStatus("error");
+      return;
+    }
+    if (!formData.student_name || !formData.primary_contact) {
       setErrorMsg("Student Name, Primary Contact Number, and Student Photo are required.");
       setStatus("error");
       return;
